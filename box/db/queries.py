@@ -4,14 +4,8 @@ from psycopg2.extensions import connection
 from pathlib import Path
 from threading import Thread
 from queue import Queue
-
-
-class Data:
-
-    def __init__(self, name: str, data: pd.DataFrame):
-        self.name = name
-        self.data = data
-
+from box.tools import Panda, PandaBox
+from time import sleep
 
 class DbQueries:
 
@@ -22,6 +16,7 @@ class DbQueries:
 
         queries = [q for q in query_path.absolute().glob('*.sql')]
         for q in queries:
+
             name = q.name.split('.')[0]
             method = self._get_data_method_factory(name=name, query=q.read_text())
             setattr(self, f"fetch_{name}", method)
@@ -30,11 +25,10 @@ class DbQueries:
     def _get_data_method_factory(self, name: str, query: str) -> Callable:
         def get_data():
             data = pd.read_sql(query, self.db_connection, parse_dates=True)
-            return Data(name=name, data=data)
-
+            return Panda(name=name, data=data)
         return get_data
 
-    def fetch_one(self, name: str) -> Data:
+    def fetch_one(self, name: str) -> Panda:
         name = f"fetch_{name}"
         method = getattr(self, name, None)
         return method()
@@ -44,9 +38,9 @@ class DbQueries:
         data = method()
         queue.put(data)
 
-    def fetch_many(self, *query_names) -> List[Data]:
+    def fetch_many(self, *names) -> PandaBox:
         queue = Queue()
-        methods = [getattr(self, f"fetch_{name}") for name in query_names]
+        methods = [getattr(self, f"fetch_{name}") for name in names]
         threads = []
         results = []
 
@@ -55,14 +49,11 @@ class DbQueries:
             thread.start()
             threads.append(thread)
 
-        while not queue.empty():
-            result = queue.get()
-            results.append(result)
-
-        queue.join()
         for thread in threads:
             thread.join()
-        return results
+
+        results = [queue.get() for thread in threads]
+        return PandaBox(*results)
 
     def fetch_all(self):
         return self.fetch_many(*self.query_names)

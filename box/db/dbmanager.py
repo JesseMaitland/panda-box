@@ -1,16 +1,9 @@
-import pandas as pd
 import psycopg2
-from psycopg2.extensions import connection
 from sqlalchemy import create_engine
-from threading import Thread
-from queue import Queue
-from typing import Callable, List, Dict
+from typing import Dict
 from pathlib import Path
 from dotenv import load_dotenv, dotenv_values
-
-
-class ConnectionNotExist(Exception):
-    pass
+from box.exceptions import ConnectionNotExist
 
 
 class DbManager:
@@ -52,5 +45,3 @@ class DbManager:
 
     def add_connection_string(self, name: str, value: str):
         self.connection_strings[name] = value
-
-
