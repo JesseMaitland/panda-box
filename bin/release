@@ -31,7 +31,12 @@ def validate_version(version):
         return False
 
 
+def print_command(*args):
+    print(' '.join(args))
+
+
 def run_process(*args):
+    print_command(*args)
     process = subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=project_root)
     output, error = process.communicate()
 
