@@ -86,6 +86,7 @@ def increment_sub_version(tag):
 
 
 def create_git_tag(tag):
+    print(f"setting git tag {tag}")
     args = ['git', 'tag', tag]
     output, error = run_process(*args)
     return True
@@ -100,22 +101,22 @@ def set_version_in_setup(tag):
 
 
 def push_git_tag():
+    print(f"pushing tags....")
     args = ['git', 'push', '--tags']
     output, error = run_process(*args)
-    print(output)
+    print(output.decode('utf-8'))
 
 
 def git_commit_all(version):
     args = ['git', 'commit', '-am', f'"update to release version {version}']
     output, error = run_process(*args)
-    print(output)
+    print(output.decode('utf-8'))
 
 
 def git_push_master():
     args = ['git', 'push']
     output, error = run_process(*args)
-    print(error)
-    print(output)
+    print(output.decode('utf-8'))
 
 
 def validate_git_tag(tag):
