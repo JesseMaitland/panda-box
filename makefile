@@ -50,6 +50,7 @@ build:
 
 deploy:
 ifdef version
+		@echo $(version)
 		./bin/release --version $(version)
 else
 		./bin/release
