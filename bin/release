@@ -114,6 +114,7 @@ def git_commit_all(version):
 def git_push_master():
     args = ['git', 'push']
     output, error = run_process(*args)
+    print(error)
     print(output)
 
 def validate_git_tag(tag):
