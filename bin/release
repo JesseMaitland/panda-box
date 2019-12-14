@@ -5,6 +5,9 @@ import re
 import argparse
 from pathlib import Path
 
+
+
+
 project_root = Path("/Users/jessemaitland/PycharmProjects/pandabox")
 setup_path = project_root / "setup.py"
 version_pattern = "VERSION = '[0-9]+.[0-9]+.[0-9]+'"
@@ -23,15 +26,15 @@ def get_arg_parser():
         parser.add_argument(command, **options)
     return parser.parse_args()
 
-
 def validate_version(version):
-    if re.search('[0-9]+.[0-9]+.[0-9]+', version):
+    if re.search(version_pattern, version):
         return True
     else:
         return False
 
 
 def run_process(*args):
+
     process = subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=project_root)
     output, error = process.communicate()
 
@@ -57,11 +60,11 @@ def is_on_master_branch():
         if '*' in line:
             current_branch = line.replace('*', '').strip()
 
+
     if current_branch != 'master':
         print(f"current branch is {current_branch}, however you must be on master to deploy!")
         return False
 
-    print("current branch is master")
     return True
 
 
@@ -86,28 +89,31 @@ def increment_sub_version(tag):
 
 
 def create_git_tag(tag):
-    print(f"creating git tag {tag} on master branch")
     args = ['git', 'tag', tag]
     output, error = run_process(*args)
     return True
 
-
 def set_version_in_setup(tag):
-    print(f"updating to version {tag} in setup.py")
     new_version = f"VERSION = '{tag}'"
     setup_py = setup_path.read_text()
     new_setup_py = re.sub(version_pattern, new_version, setup_py)
     setup_path.write_text(new_setup_py)
     print(f"setup.py updated to {new_version}")
 
-
 def push_git_tag():
-    print(f"pushing tags to remote origin")
     args = ['git', 'push', '--tags']
     output, error = run_process(*args)
     print(output)
-    return True
 
+def git_commit_all(version):
+    args = ['git', 'commit', '-am', f'"update to release version {version}']
+    output, error = run_process(*args)
+    print(output)
+
+def git_push_master():
+    args = ['git', 'push']
+    output, error = run_process(*args)
+    print(output)
 
 def validate_git_tag(tag):
     last_tag = get_last_tag()
@@ -118,7 +124,6 @@ def validate_git_tag(tag):
         print(f"error setting git tag. expected tag was {tag}, however current tag is {last_tag}")
         exit()
 
-
 def main():
     args = get_arg_parser()
 
@@ -126,14 +131,15 @@ def main():
         exit()
 
     if args.version and validate_version(args.version):
-        print(f"version {args.version} valid")
         version = args.version
     else:
         version = get_last_tag()
         version = increment_sub_version(version)
 
-    create_git_tag(version)
     set_version_in_setup(version)
+    git_commit_all(version)
+    git_push_master()
+    create_git_tag(version)
     push_git_tag()
 
 
