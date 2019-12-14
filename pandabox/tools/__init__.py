@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import List
-from box.exceptions import NoPandaError, PandaExistsError
+from pandabox.exceptions import NoPandaError, PandaExistsError
 
 
 class Panda:

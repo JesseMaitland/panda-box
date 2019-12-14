@@ -4,8 +4,7 @@ from psycopg2.extensions import connection
 from pathlib import Path
 from threading import Thread
 from queue import Queue
-from box.tools import Panda, PandaBox
-from time import sleep
+from pandabox.tools import Panda, PandaBox
 
 class DbQueries:
 

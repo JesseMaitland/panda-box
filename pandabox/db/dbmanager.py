@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from typing import Dict
 from pathlib import Path
 from dotenv import load_dotenv, dotenv_values
-from box.exceptions import ConnectionNotExist
+from pandabox.exceptions import ConnectionNotExist
 
 
 class DbManager:
