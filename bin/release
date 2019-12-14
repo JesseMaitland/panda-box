@@ -39,6 +39,7 @@ def run_process(*args):
     output, error = process.communicate()
 
     if error:
+        print("this is an error")
         print(error.decode("utf-8"))
         exit()
     else:
