@@ -25,6 +25,7 @@ def get_arg_parser():
 
 
 def validate_version(version):
+    print(f"version {version} received")
     if re.search(version_pattern, version):
         return True
     else:
@@ -142,7 +143,6 @@ def main():
         exit()
 
     if args.version and validate_version(args.version):
-        print("VERSIONHhhhhhhhhhhhhhhhhhhhhhhhhhh")
         version = args.version
     else:
         version = get_last_tag()
