@@ -125,6 +125,7 @@ def validate_git_tag(tag):
         print(f"error setting git tag. expected tag was {tag}, however current tag is {last_tag}")
         exit()
 
+
 def main():
     args = get_arg_parser()
 
