@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 #############################################################
@@ -29,7 +28,7 @@ update:
 
 lint:
 	. venv/bin/activate \
-	&& python -m flake8 ./aws_lambda_package ./tests
+	&& python -m flake8 ./pandabox ./tests
 
 unit_test:
 	. venv/bin/activate \
@@ -49,9 +48,8 @@ build:
 	&& python setup.py sdist bdist_wheel
 
 deploy:
-ifdef version
-		@echo $(version)
+  ifdef version
 		./bin/release --version $(version)
-else
-		./bin/release
-endif
+  else
+	  ./bin/release
+  endif

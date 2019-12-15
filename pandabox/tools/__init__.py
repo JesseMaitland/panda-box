@@ -25,6 +25,9 @@ class PandaBox:
     def __iter__(self):
         return PandaIterator(self)
 
+    def __len__(self):
+        return len(self.pandas)
+
     @property
     def panda_names(self) -> List[str]:
         """

@@ -29,7 +29,7 @@ class DbQueries:
 
     def fetch_one(self, name: str) -> Panda:
         name = f"fetch_{name}"
-        method = getattr(self, name, None)
+        method = getattr(self, name)
         return method()
 
     @staticmethod
