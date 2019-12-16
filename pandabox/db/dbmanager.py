@@ -40,7 +40,7 @@ class DbManager:
     def init_env(self):
         for key, value in dotenv_values(dotenv_path=self.env_path).items():
             if value.startswith(self.prefix):
-                self.add_connection_string(key.lower(), value.lstrip(self.prefix))
+                self.add_connection_string(key.lower(), value.replace(self.prefix, ''))
 
     def get_connection_string(self, name: str):
         for key, value in self.connection_strings.items():
