@@ -33,11 +33,12 @@ setup(
     install_requires=[
         'psycopg2-binary',
         'pandas',
-        'python-dotenv'
+        'python-dotenv',
+        'sqlalchmey'
     ],
     license='MIT',
     packages=find_packages(exclude=('tests*', 'venv', 'sample_queries*')),
-    download_url="",
+    download_url="https://github.com/JesseMaitland/panda-box",
     long_description_content_type="text/markdown",
     python_requires='>=3',
     cmdclass={

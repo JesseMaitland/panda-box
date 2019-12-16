@@ -152,4 +152,3 @@ class PandaIterator:
             result = self._panda_box.pandas[self._index]
             self._index += 1
         return result
-
