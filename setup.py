@@ -3,7 +3,7 @@ import os
 from setuptools import setup, find_packages
 from setuptools.command.install import install
 
-VERSION = '0.12.3'
+VERSION = '0.12.4'
 
 
 class VerifyVersionCommand(install):
@@ -34,7 +34,7 @@ setup(
         'psycopg2-binary',
         'pandas',
         'python-dotenv',
-        'sqlalchmey'
+        'sqlalchemy'
     ],
     license='MIT',
     packages=find_packages(exclude=('tests*', 'venv', 'sample_queries*')),
