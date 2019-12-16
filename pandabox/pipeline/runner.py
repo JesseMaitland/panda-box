@@ -58,4 +58,7 @@ class PipelineRunner:
             step = transform_step(data_box)
             data_box = step.execute()
 
+        for panda in self.panda_box:
+            data_box.add_panda(panda)
+
         return data_box
