@@ -5,7 +5,16 @@ from pandabox.exceptions import NoPandaError, PandaExistsError
 
 class Panda:
 
+    """
+    Simple data class which allows reference to a named data frame within a collection.
+    """
+
     def __init__(self, name: str, data: pd.DataFrame):
+        """
+        Args:
+            name: used to reference this `Panda` from within the `PandaBox`
+            data: data frame
+        """
         self.name = name
         self.data = data
 
@@ -13,12 +22,15 @@ class Panda:
 class PandaBox:
     """ The Panda Box - Keep those unruly Pandas in order
 
-    This object is used to manage a group of data frames as returned by the other stuff.... TODO: make comment
+    This object is used to manage a group of data frames which can be accessed using a `name`
+    attribute. The intent of this object is to serve as an organisational service for multiple
+    pandas data frames.
     """
 
     def __init__(self, *pandas):
         """
-        :param root_path: Path to a collection of .sql query files
+        Args:
+            *pandas: list of `Panda` objects to add to the `PandaBox`
         """
         self.pandas = list(pandas)
 
@@ -31,15 +43,22 @@ class PandaBox:
     @property
     def panda_names(self) -> List[str]:
         """
-        :return: List of panda names in this PandaBox object
+        List of available `Panda` names
+
+        Returns:
+            List[str]
         """
         return [panda.name for panda in self.pandas]
 
     def get_panda(self, name: str) -> Panda:
         """
-        Returns a copy of the panda from the PandaBox. If not found a NoPandaError is raised.
-        :param name: name of desired panda
-        :return: Panda object
+        Fetches a `Panda` from the `PandaBox`. The returned object will still be linked to the `PandaBox`
+        and will be mutable
+        Args:
+            name: the desired `Panda` to return
+
+        Returns:
+            Panda
         """
         for panda in self.pandas:
             if panda.name == name:
@@ -48,9 +67,14 @@ class PandaBox:
 
     def remove_panda(self, name: str) -> Panda:
         """
-        Returns a Panda object, removing it from the collection in the PandaBox. If not found a no panda error is raised.
-        :param name: name of desired panda
-        :return: Panda object
+        Removes a desired `Panda` from the `PandaBox` if the name is not found, a `NoPandaError`
+        exception is raised.
+
+        Args:
+            name: the 'Panda' to remove from the box
+
+        Returns:
+            Panda
         """
         for i in range(len(self.pandas)):
             if name == self.pandas[i].name:
@@ -60,9 +84,14 @@ class PandaBox:
 
     def add_panda(self, panda: Panda) -> None:
         """
-        Adds a panda into the PandaBox. If a panda with the same name is found, a PandaExistsError is raised.
-        :param panda: the panda to add into the PandaBox
-        :return: None
+        Adds a `Panda` into the `PandaBox.
+        If a `Panda` with the same name is found, a `PandaExistsError` is raised.
+
+        Args:
+            panda: the `Panda` to add to the `PandaBox`
+
+        Returns:
+            None
         """
         if panda.name in self.panda_names:
             raise PandaExistsError
@@ -72,9 +101,14 @@ class PandaBox:
 
     def destroy_panda(self, name: str) -> None:
         """
-        Destroys a panda object by calling the del function. Allows
-        :param name:
-        :return:
+        Destroys a `Panda` by using the `del` function.
+        If the panda does not exits a `NoPandaError` is raised
+
+        Args:
+            name: name of the `Panda` to remove
+
+        Returns:
+            None
         """
         for i in range(len(self.pandas)):
             if name == self.pandas[i].name:
@@ -84,7 +118,17 @@ class PandaBox:
                 return
         raise NoPandaError(f"no panda found with name {name}")
 
-    def update_panda(self, panda: Panda):
+    def update_panda(self, panda: Panda) -> None:
+        """
+        Updates a `Panda` object which already exists in the `PandaBox. If the `Panda` can not be found
+        a `NoPandaError` exception is raised.
+
+        Args:
+            panda: The desired `Panda` to update
+
+        Returns:
+            None
+        """
         for i in range(len(self.pandas) - 1):
             if panda.name == self.pandas[i].name:
                 self.pandas[i] = panda
@@ -94,7 +138,7 @@ class PandaBox:
 
 class PandaIterator:
     """
-    Simple iterator class for the PandaBox Object
+    Iterator class used by the `PandaBox` object
     """
 
     def __init__(self, panda_box: PandaBox):
