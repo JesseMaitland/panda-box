@@ -78,7 +78,6 @@ class PandaBox:
         """
         for i in range(len(self.pandas)):
             if name == self.pandas[i].name:
-                delattr(self, self.pandas[i].name)
                 return self.pandas.pop(i)
         raise NoPandaError(f"no panda found with name {name}")
 
@@ -112,9 +111,8 @@ class PandaBox:
         """
         for i in range(len(self.pandas)):
             if name == self.pandas[i].name:
-                panda = self.pandas.pop(i)
-                delattr(self, panda.name)
-                del panda
+                panda = self.pandas.pop(i)  # noqa
+                del(panda)
                 return
         raise NoPandaError(f"no panda found with name {name}")
 

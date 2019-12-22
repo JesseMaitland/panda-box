@@ -2,6 +2,7 @@ import pandas as pd
 from typing import Callable
 from psycopg2.extensions import connection
 from pathlib import Path
+from jinja2 import Template
 from threading import Thread
 from queue import Queue
 from pandabox.tools import Panda, PandaBox
@@ -16,23 +17,33 @@ class DbQueries:
     query can then be referenced by the name of the .sql file, omitting the .sql extension.
     """
 
-    def __init__(self, query_path: Path, db_connection: connection):
+    def __init__(self, query_path: Path, db_connection: connection, **params):
         """
 
         Args:
             query_path: Path object to desired directory conatining .sql files
             db_connection: The connection object to desired database.
         """
+        self.params = params
         self.query_path = query_path
         self.db_connection = db_connection
         self.query_names = []
 
         queries = [q for q in query_path.absolute().glob('*.sql')]
+
         for q in queries:
             name = q.name.split('.')[0]
-            method = self._get_data_method_factory(name=name, query=q.read_text())
+            templated_query = self._render_sql_template(q.read_text())
+            method = self._get_data_method_factory(name=name, query=templated_query)
             setattr(self, f"fetch_{name}", method)
+            setattr(self, f"{name}_query", templated_query)
             self.query_names.append(name)
+
+    def _render_sql_template(self, query: str) -> str:
+        template = Template(source=query,
+                            line_comment_prefix='--',
+                            autoescape=True)
+        return template.render(params=self.params)
 
     def _get_data_method_factory(self, name: str, query: str) -> Callable:
         def get_data():
@@ -52,7 +63,7 @@ class DbQueries:
         Args:
             name: name of the desired query to execute
         Returns:
-            Panda
+            Panda: A simple data class
         """
         name = f"fetch_{name}"
         method = getattr(self, name)
