@@ -70,3 +70,15 @@ class DbCommand:
 
     def execute_all(self):
         self.execute_many(*self.query_names)
+
+    def print_query(self, name: str) -> None:
+        for query_name in self.query_names:
+            if query_name == name:
+                query = getattr(self, f"{query_name}_query")
+                print(query)
+                break
+
+    def get_query(self, name: str) -> str:
+        for query_name in self.query_names:
+            if query_name == name:
+                return getattr(self, f"{query_name}_query")
